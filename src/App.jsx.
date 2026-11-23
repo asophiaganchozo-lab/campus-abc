@@ -1,0 +1,38 @@
+
+import React from 'react'
+
+export default function App() {
+  return (
+    <div>
+      <header className="header">
+        <h1>🎓 Campus ABC</h1>
+        <p>Tu espacio de aprendizaje virtual</p>
+      </header>
+
+      <main className="principal">
+        <h2>Bienvenido a Campus ABC</h2>
+        <p>
+          Aprende, practica y desarrolla tus conocimientos
+          en nuestra plataforma educativa.
+        </p>
+
+        <section className="especialidades">
+          <article>
+            <h3>💻 Informática</h3>
+            <p>Programación, redes, bases de datos e inteligencia artificial.</p>
+          </article>
+
+          <article>
+            <h3>🔬 Ciencias</h3>
+            <p>Matemáticas, física y formación científica.</p>
+          </article>
+
+          <article>
+            <h3>📊 Contabilidad</h3>
+            <p>Matemáticas financieras y gestión empresarial.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+  )
+}
