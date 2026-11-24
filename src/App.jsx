@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { niveles, especialidades, curriculo } from './curriculo.js'
+import { asignaturas, curriculo } from './curriculo.js'
 import { actividades } from './actividades.js'
 import { lecciones } from './lecciones.js'
 import './styles.css'
@@ -16,6 +16,7 @@ const normalizar = valor =>
 function obtenerEjercicios(actividad) {
   if (actividad.tipo === 'relacionar') {
     const pares = actividad.ejercicios?.[0]?.pares || []
+
     return pares.map((par, i) => ({
       ...par,
       pregunta: par.concepto,
@@ -26,7 +27,7 @@ function obtenerEjercicios(actividad) {
   return actividad.ejercicios || []
 }
 
-function calificar(actividad, respuestas) {
+function calificar(actividad, respuestas, intento) {
   const ejercicios = obtenerEjercicios(actividad)
   let correctas = 0
 
@@ -34,9 +35,7 @@ function calificar(actividad, respuestas) {
     const respuesta = respuestas[i]
 
     if (
-      ['seleccion', 'completar', 'relacionar'].includes(
-        actividad.tipo
-      ) &&
+      ['seleccion', 'completar', 'relacionar'].includes(actividad.tipo) &&
       normalizar(respuesta) === normalizar(ejercicio.respuesta)
     ) {
       correctas++
@@ -63,7 +62,6 @@ function calificar(actividad, respuestas) {
   })
 
   const total = ejercicios.length
-  const intento = respuestas.intento || 1
   const notaMaxima = intento === 1 ? 10 : intento === 2 ? 9 : 8
   const nota = total
     ? Number(((correctas / total) * notaMaxima).toFixed(2))
@@ -74,8 +72,6 @@ function calificar(actividad, respuestas) {
 
 export default function App() {
   const [pantalla, setPantalla] = useState('inicio')
-  const [especialidad, setEspecialidad] = useState('')
-  const [nivel, setNivel] = useState('')
   const [materia, setMateria] = useState('')
   const [modulo, setModulo] = useState(null)
   const [tema, setTema] = useState('')
@@ -84,23 +80,20 @@ export default function App() {
   const [intentos, setIntentos] = useState({})
   const [resultado, setResultado] = useState(null)
 
-  const contenido =
-    curriculo?.[especialidad]?.[nivel]?.[materia]
-
+  const contenido = curriculo?.[materia]
   const modulos = contenido?.modulos || []
   const leccion = lecciones?.[tema]
   const actividadesTema = actividades?.[tema] || []
 
   const claveActividad = actividadActual
-    ? `${especialidad}-${nivel}-${materia}-${tema}-${actividadActual.nombre}`
+    ? `${materia}-${tema}-${actividadActual.nombre}`
     : ''
 
   const intentosUsados = intentos[claveActividad] || 0
 
   const volver = () => {
     const rutas = {
-      asignaturas: 'inicio',
-      modulos: 'asignaturas',
+      modulos: 'inicio',
       temas: 'modulos',
       clase: 'temas',
       actividades: 'clase',
@@ -125,6 +118,13 @@ export default function App() {
     </button>
   )
 
+  const seleccionarMateria = nombre => {
+    setMateria(nombre)
+    setModulo(null)
+    setTema('')
+    setPantalla('modulos')
+  }
+
   const abrirActividad = actividad => {
     setActividadActual(actividad)
     setRespuestas({})
@@ -142,14 +142,10 @@ export default function App() {
   const enviarActividad = () => {
     const nuevoIntento = intentosUsados + 1
 
-    const respuestasConIntento = {
-      ...respuestas,
-      intento: nuevoIntento
-    }
-
     const nota = calificar(
       actividadActual,
-      respuestasConIntento
+      respuestas,
+      nuevoIntento
     )
 
     setIntentos(anterior => ({
@@ -251,61 +247,38 @@ export default function App() {
           <>
             <h2>¡Bienvenido a Campus ABC!</h2>
             <p>
-              Selecciona tu especialidad y año de Bachillerato.
+              Explora nuestras asignaturas, aprende y desarrolla
+              tus conocimientos.
             </p>
 
+            <h2>Informática</h2>
+            <p>Asignaturas de formación técnica.</p>
+
             <div className="especialidades">
-              {Object.keys(especialidades).map(nombre =>
-                tarjeta(
-                  nombre,
-                  'Explora tus asignaturas y contenidos.',
-                  () => {
-                    setEspecialidad(nombre)
-                  }
-                )
-              )}
+              {asignaturas
+                .filter(item => item.categoria === 'Informática')
+                .map(item =>
+                  tarjeta(
+                    item.nombre,
+                    'Explora los módulos, las clases, los videos y las actividades.',
+                    () => seleccionarMateria(item.nombre)
+                  )
+                )}
             </div>
 
-            <h2>Selecciona tu año</h2>
-
-            <select
-              value={nivel}
-              onChange={e => setNivel(e.target.value)}
-            >
-              <option value="">Selecciona tu nivel</option>
-              {niveles.map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-
-            <button
-              className="continuar"
-              disabled={!especialidad || !nivel}
-              onClick={() => setPantalla('asignaturas')}
-              type="button"
-            >
-              Continuar →
-            </button>
-          </>
-        )}
-
-        {pantalla === 'asignaturas' && (
-          <>
-            <h2>Asignaturas</h2>
-            <p>{especialidad} · {nivel}</p>
+            <h2>Materias comunes</h2>
+            <p>Asignaturas de formación general.</p>
 
             <div className="especialidades">
-              {(especialidades[especialidad] || []).map(nombre =>
-                tarjeta(
-                  nombre,
-                  'Consulta los módulos y temas de esta asignatura.',
-                  () => {
-                    setMateria(nombre)
-                    setModulo(null)
-                    setPantalla('modulos')
-                  }
-                )
-              )}
+              {asignaturas
+                .filter(item => item.categoria === 'Comunes')
+                .map(item =>
+                  tarjeta(
+                    item.nombre,
+                    'Explora los contenidos y desarrolla tus conocimientos.',
+                    () => seleccionarMateria(item.nombre)
+                  )
+                )}
             </div>
           </>
         )}
@@ -313,7 +286,9 @@ export default function App() {
         {pantalla === 'modulos' && (
           <>
             <h2>{materia}</h2>
-            <p>Nivel: {contenido?.nivel || 'Contenido en preparación'}</p>
+            <p>
+              Formación académica · 5 módulos de aprendizaje
+            </p>
 
             {modulos.length > 0 ? (
               <div className="especialidades">
@@ -330,10 +305,12 @@ export default function App() {
               </div>
             ) : (
               <section style={estilos.panel}>
-                <h3>Currículo pendiente de completar</h3>
+                <h3>Contenido en preparación</h3>
                 <p>
-                  Esta asignatura todavía no tiene sus módulos
-                  incorporados al currículo.
+                  Esta asignatura ya está incorporada al campus.
+                  Estamos preparando su presentación, objetivos,
+                  cinco módulos, clases, videos, actividades y
+                  evaluaciones.
                 </p>
               </section>
             )}
@@ -349,7 +326,7 @@ export default function App() {
               {(modulo?.temas || []).map((nombre, i) =>
                 tarjeta(
                   `Tema ${i + 1}: ${nombre}`,
-                  'Estudiar conceptos, ejemplos y actividades.',
+                  'Estudia los conceptos, ejemplos, videos y actividades.',
                   () => {
                     setTema(nombre)
                     setPantalla('clase')
@@ -375,15 +352,12 @@ export default function App() {
                 <section style={estilos.panel}>
                   <h3>📚 Conceptos y explicaciones</h3>
                   <p>
-                    Lee con atención cada concepto antes de
-                    realizar las actividades.
+                    Lee con atención cada concepto antes de realizar
+                    las actividades.
                   </p>
 
                   {(leccion.conceptos || []).map((concepto, i) => (
-                    <article
-                      key={i}
-                      style={estilos.concepto}
-                    >
+                    <article key={i} style={estilos.concepto}>
                       <h3>{i + 1}. {concepto.titulo}</h3>
                       <p>{concepto.texto}</p>
                     </article>
@@ -412,10 +386,11 @@ export default function App() {
                 {leccion.video && (
                   <section style={estilos.panel}>
                     <h3>🎥 Video educativo</h3>
-                    <p>{leccion.video.titulo}</p>
                     <p>
-                      Abre el recurso audiovisual para reforzar
-                      lo aprendido.
+                      {leccion.video.titulo || leccion.video.titulo}
+                    </p>
+                    <p>
+                      Refuerza lo aprendido con este recurso audiovisual.
                     </p>
                     <a
                       href={leccion.video.url}
@@ -439,8 +414,8 @@ export default function App() {
               <section style={estilos.panel}>
                 <h3>Lección pendiente de incorporar</h3>
                 <p>
-                  Todavía no se ha creado la explicación de este
-                  tema. Estamos completando los contenidos.
+                  Estamos preparando la explicación completa,
+                  los ejemplos y los recursos educativos de este tema.
                 </p>
               </section>
             )}
@@ -474,8 +449,8 @@ export default function App() {
               <section style={estilos.panel}>
                 <h3>Actividades pendientes</h3>
                 <p>
-                  Todavía no se han incorporado actividades para
-                  este tema.
+                  Estamos preparando ejercicios variados y
+                  funcionales para este tema.
                 </p>
               </section>
             )}
