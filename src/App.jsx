@@ -1,72 +1,32 @@
 
 import React, { useState } from 'react'
-import { curriculo } from './curriculo.js'
-const materias = {
-  Informatica: [
-    'Programación y Desarrollo de Software',
-    'Diseño y Desarrollo Web',
-    'Bases de Datos',
-    'Sistemas Operativos',
-    'Redes y Conectividad',
-    'Soporte Técnico y Mantenimiento',
-    'Aplicaciones Ofimáticas',
-    'Seguridad Informática',
-    'Inteligencia Artificial Aplicada',
-    'Ética, Legislación y Ciudadanía Digital',
-    'Matemáticas',
-    'Física',
-    'Lengua y Literatura',
-    'Inglés',
-    'Emprendimiento y Gestión'
-  ],
-  'Ciencias Naturales': [
-    'Matemáticas',
-    'Física',
-    'Lengua y Literatura',
-    'Inglés',
-    'Emprendimiento y Gestión'
-  ],
-  Contabilidad: [
-    'Matemáticas',
-    'Física',
-    'Lengua y Literatura',
-    'Inglés',
-    'Emprendimiento y Gestión'
-  ]
-}
-
-const modulos = [
-  'Módulo 1',
-  'Módulo 2',
-  'Módulo 3',
-  'Módulo 4',
-  'Módulo 5'
-]
-
-const niveles = [
-  'Primero de Bachillerato',
-  'Segundo de Bachillerato',
-  'Tercero de Bachillerato'
-]
+import { niveles, especialidades, curriculo } from './curriculo.js'
+import './styles.css'
 
 export default function App() {
   const [pantalla, setPantalla] = useState('inicio')
   const [especialidad, setEspecialidad] = useState('')
   const [nivel, setNivel] = useState('')
   const [materia, setMateria] = useState('')
-  const [modulo, setModulo] = useState('')
+  const [modulo, setModulo] = useState(null)
   const [tema, setTema] = useState('')
 
+  const contenido = curriculo?.[especialidad]?.[nivel]?.[materia]
+  const modulos = contenido?.modulos || []
+
   const volver = () => {
-    if (pantalla === 'asignaturas') setPantalla('inicio')
-    else if (pantalla === 'modulos') setPantalla('asignaturas')
-    else if (pantalla === 'temas') setPantalla('modulos')
-    else if (pantalla === 'clase') setPantalla('temas')
-    else if (pantalla === 'actividades') setPantalla('clase')
+    const rutas = {
+      asignaturas: 'inicio',
+      modulos: 'asignaturas',
+      temas: 'modulos',
+      clase: 'temas',
+      actividades: 'clase'
+    }
+    setPantalla(rutas[pantalla] || 'inicio')
   }
 
   const tarjeta = (titulo, descripcion, accion) => (
-    <button className="tarjeta" onClick={accion}>
+    <button className="tarjeta" onClick={accion} key={titulo}>
       <h3>{titulo}</h3>
       <p>{descripcion}</p>
       <span>Entrar →</span>
@@ -93,10 +53,10 @@ export default function App() {
             <p>Selecciona tu especialidad y año de Bachillerato.</p>
 
             <div className="especialidades">
-              {Object.keys(materias).map((nombre) =>
+              {Object.keys(especialidades).map(nombre =>
                 tarjeta(
                   nombre,
-                  'Explora tus asignaturas y actividades.',
+                  'Explora tus asignaturas y contenidos.',
                   () => setEspecialidad(nombre)
                 )
               )}
@@ -105,10 +65,12 @@ export default function App() {
             <h2>Selecciona tu año</h2>
             <select
               value={nivel}
-              onChange={(e) => setNivel(e.target.value)}
+              onChange={e => setNivel(e.target.value)}
             >
               <option value="">Selecciona tu nivel</option>
-              {niveles.map((n) => <option key={n}>{n}</option>)}
+              {niveles.map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
             </select>
 
             <button
@@ -125,12 +87,18 @@ export default function App() {
           <>
             <h2>Asignaturas</h2>
             <p>{especialidad} · {nivel}</p>
+
             <div className="especialidades">
-              {materias[especialidad].map((nombre) =>
-                tarjeta(nombre, 'Cinco módulos de aprendizaje.', () => {
-                  setMateria(nombre)
-                  setPantalla('modulos')
-                })
+              {(especialidades[especialidad] || []).map(nombre =>
+                tarjeta(
+                  nombre,
+                  'Consulta los módulos y temas de esta asignatura.',
+                  () => {
+                    setMateria(nombre)
+                    setModulo(null)
+                    setPantalla('modulos')
+                  }
+                )
               )}
             </div>
           </>
@@ -139,28 +107,45 @@ export default function App() {
         {pantalla === 'modulos' && (
           <>
             <h2>{materia}</h2>
-            <p>Selecciona un módulo.</p>
-            <div className="especialidades">
-              {modulos.map((nombre) =>
-                tarjeta(nombre, 'Cinco temas de aprendizaje.', () => {
-                  setModulo(nombre)
-                  setPantalla('temas')
-                })
-              )}
-            </div>
+            <p>Nivel: {contenido?.nivel || 'Contenido en preparación'}</p>
+
+            {modulos.length > 0 ? (
+              <div className="especialidades">
+                {modulos.map((item, i) =>
+                  tarjeta(
+                    item.nombre,
+                    `${item.temas.length} temas de aprendizaje`,
+                    () => {
+                      setModulo(item)
+                      setPantalla('temas')
+                    }
+                  )
+                )}
+              </div>
+            ) : (
+              <p>
+                El currículo de esta asignatura se incorporará
+                próximamente. No se ha eliminado tu selección.
+              </p>
+            )}
           </>
         )}
 
         {pantalla === 'temas' && (
           <>
-            <h2>{modulo}</h2>
+            <h2>{modulo?.nombre}</h2>
             <p>Selecciona un tema para estudiar.</p>
+
             <div className="especialidades">
-              {[1, 2, 3, 4, 5].map((n) =>
-                tarjeta(`Tema ${n}`, 'Clase, ejemplos y actividades.', () => {
-                  setTema(`Tema ${n}`)
-                  setPantalla('clase')
-                })
+              {(modulo?.temas || []).map((nombre, i) =>
+                tarjeta(
+                  `Tema ${i + 1}: ${nombre}`,
+                  'Abrir clase y actividades.',
+                  () => {
+                    setTema(nombre)
+                    setPantalla('clase')
+                  }
+                )
               )}
             </div>
           </>
@@ -169,9 +154,33 @@ export default function App() {
         {pantalla === 'clase' && (
           <>
             <h2>{tema}</h2>
-            <p>{materia} · {modulo}</p>
-            <p>El contenido de la clase se incorporará en esta sección.</p>
-            <button className="continuar" onClick={() => setPantalla('actividades')}>
+            <p>{materia} · {modulo?.nombre}</p>
+
+            <section className="tarjeta">
+              <h3>Objetivo de aprendizaje</h3>
+              <p>
+                Comprender y aplicar los conceptos relacionados con
+                {` ${tema.toLowerCase()}`} mediante análisis y práctica.
+              </p>
+
+              <h3>Desarrollo de la clase</h3>
+              <p>
+                En esta sección se incorporará la explicación completa,
+                los conceptos fundamentales, ejemplos resueltos y
+                aplicaciones prácticas de este tema.
+              </p>
+
+              <h3>Aplicación</h3>
+              <p>
+                El estudiante trabajará con situaciones y problemas
+                relacionados con los contenidos estudiados.
+              </p>
+            </section>
+
+            <button
+              className="continuar"
+              onClick={() => setPantalla('actividades')}
+            >
               Ir a las actividades →
             </button>
           </>
@@ -179,8 +188,26 @@ export default function App() {
 
         {pantalla === 'actividades' && (
           <>
-            <h2>Actividades de {tema}</h2>
-            <p>Próximamente incorporaremos las cinco actividades con diez ejercicios cada una.</p>
+            <h2>Actividades de aprendizaje</h2>
+            <p>{tema}</p>
+
+            <div className="especialidades">
+              {[
+                'Selección múltiple',
+                'Completar',
+                'Relacionar conceptos',
+                'Ordenar procedimientos',
+                'Resolución y análisis de problemas'
+              ].map((nombre, i) =>
+                tarjeta(
+                  `Actividad ${i + 1}: ${nombre}`,
+                  '10 ejercicios por actividad.',
+                  () => alert(
+                    'Los ejercicios de esta actividad se incorporarán en la siguiente etapa.'
+                  )
+                )
+              )}
+            </div>
           </>
         )}
       </main>
