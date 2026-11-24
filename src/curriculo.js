@@ -1,65 +1,20 @@
 
 export const asignaturas = [
-  {
-    nombre: 'Programación y Desarrollo de Software',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Diseño y Desarrollo Web',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Bases de Datos',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Sistemas Operativos',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Redes y Conectividad',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Soporte Técnico y Mantenimiento',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Aplicaciones Ofimáticas',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Seguridad Informática',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Inteligencia Artificial Aplicada',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Ética, Legislación y Ciudadanía Digital',
-    categoria: 'Informática'
-  },
-  {
-    nombre: 'Matemáticas',
-    categoria: 'Comunes'
-  },
-  {
-    nombre: 'Física',
-    categoria: 'Comunes'
-  },
-  {
-    nombre: 'Lengua y Literatura',
-    categoria: 'Comunes'
-  },
-  {
-    nombre: 'Inglés',
-    categoria: 'Comunes'
-  },
-  {
-    nombre: 'Emprendimiento y Gestión',
-    categoria: 'Comunes'
-  }
+  { nombre: 'Programación y Desarrollo de Software', categoria: 'Informática' },
+  { nombre: 'Diseño y Desarrollo Web', categoria: 'Informática' },
+  { nombre: 'Bases de Datos', categoria: 'Informática' },
+  { nombre: 'Sistemas Operativos', categoria: 'Informática' },
+  { nombre: 'Redes y Conectividad', categoria: 'Informática' },
+  { nombre: 'Soporte Técnico y Mantenimiento', categoria: 'Informática' },
+  { nombre: 'Aplicaciones Ofimáticas', categoria: 'Informática' },
+  { nombre: 'Seguridad Informática', categoria: 'Informática' },
+  { nombre: 'Inteligencia Artificial Aplicada', categoria: 'Informática' },
+  { nombre: 'Ética, Legislación y Ciudadanía Digital', categoria: 'Informática' },
+  { nombre: 'Matemáticas', categoria: 'Comunes' },
+  { nombre: 'Física', categoria: 'Comunes' },
+  { nombre: 'Lengua y Literatura', categoria: 'Comunes' },
+  { nombre: 'Inglés', categoria: 'Comunes' },
+  { nombre: 'Emprendimiento y Gestión', categoria: 'Comunes' }
 ]
 
 export const curriculo = {
@@ -114,6 +69,62 @@ export const curriculo = {
           'Implementación de módulos y estructuras de datos',
           'Pruebas, validación y corrección de errores',
           'Documentación, presentación y evaluación del proyecto'
+        ]
+      }
+    ]
+  },
+
+  'Diseño y Desarrollo Web': {
+    nivel: 'Intermedio',
+    modulos: [
+      {
+        nombre: 'Módulo 1: Fundamentos del desarrollo web',
+        temas: [
+          'Introducción a Internet y la arquitectura web',
+          'Funcionamiento de navegadores y servidores',
+          'Estructura de páginas web',
+          'Lenguajes HTML, CSS y JavaScript',
+          'Diseño y planificación de sitios web'
+        ]
+      },
+      {
+        nombre: 'Módulo 2: Estructura y contenido con HTML',
+        temas: [
+          'Estructura de un documento HTML',
+          'Etiquetas, atributos y elementos',
+          'Textos, enlaces e imágenes',
+          'Listas, tablas y formularios',
+          'HTML semántico y accesibilidad'
+        ]
+      },
+      {
+        nombre: 'Módulo 3: Diseño y estilos con CSS',
+        temas: [
+          'Fundamentos de CSS',
+          'Selectores, propiedades y valores',
+          'Colores, tipografía y fondos',
+          'Modelo de cajas y posicionamiento',
+          'Diseño adaptable y responsive'
+        ]
+      },
+      {
+        nombre: 'Módulo 4: Programación con JavaScript',
+        temas: [
+          'Fundamentos de JavaScript',
+          'Variables, datos y operadores',
+          'Condicionales y ciclos',
+          'Funciones y eventos',
+          'Manipulación del DOM'
+        ]
+      },
+      {
+        nombre: 'Módulo 5: Proyecto integrador web',
+        temas: [
+          'Planificación del sitio',
+          'Diseño de interfaces',
+          'Construcción de páginas',
+          'Interactividad y adaptación',
+          'Pruebas y publicación del proyecto'
         ]
       }
     ]
