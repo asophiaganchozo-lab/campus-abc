@@ -1,26 +1,77 @@
+
 import React, { useState } from 'react'
 
+const materias = {
+  Informatica: [
+    'Programación y Desarrollo de Software',
+    'Diseño y Desarrollo Web',
+    'Bases de Datos',
+    'Sistemas Operativos',
+    'Redes y Conectividad',
+    'Soporte Técnico y Mantenimiento',
+    'Aplicaciones Ofimáticas',
+    'Seguridad Informática',
+    'Inteligencia Artificial Aplicada',
+    'Ética, Legislación y Ciudadanía Digital',
+    'Matemáticas',
+    'Física',
+    'Lengua y Literatura',
+    'Inglés',
+    'Emprendimiento y Gestión'
+  ],
+  'Ciencias Naturales': [
+    'Matemáticas',
+    'Física',
+    'Lengua y Literatura',
+    'Inglés',
+    'Emprendimiento y Gestión'
+  ],
+  Contabilidad: [
+    'Matemáticas',
+    'Física',
+    'Lengua y Literatura',
+    'Inglés',
+    'Emprendimiento y Gestión'
+  ]
+}
+
+const modulos = [
+  'Módulo 1',
+  'Módulo 2',
+  'Módulo 3',
+  'Módulo 4',
+  'Módulo 5'
+]
+
+const niveles = [
+  'Primero de Bachillerato',
+  'Segundo de Bachillerato',
+  'Tercero de Bachillerato'
+]
+
 export default function App() {
+  const [pantalla, setPantalla] = useState('inicio')
   const [especialidad, setEspecialidad] = useState('')
   const [nivel, setNivel] = useState('')
+  const [materia, setMateria] = useState('')
+  const [modulo, setModulo] = useState('')
+  const [tema, setTema] = useState('')
 
-  const especialidades = [
-    {
-      nombre: 'Informática',
-      icono: '💻',
-      descripcion: 'Programación, redes, bases de datos e inteligencia artificial.'
-    },
-    {
-      nombre: 'Ciencias Naturales',
-      icono: '🔬',
-      descripcion: 'Ciencias, investigación, matemáticas y física.'
-    },
-    {
-      nombre: 'Contabilidad',
-      icono: '📊',
-      descripcion: 'Contabilidad, finanzas y gestión empresarial.'
-    }
-  ]
+  const volver = () => {
+    if (pantalla === 'asignaturas') setPantalla('inicio')
+    else if (pantalla === 'modulos') setPantalla('asignaturas')
+    else if (pantalla === 'temas') setPantalla('modulos')
+    else if (pantalla === 'clase') setPantalla('temas')
+    else if (pantalla === 'actividades') setPantalla('clase')
+  }
+
+  const tarjeta = (titulo, descripcion, accion) => (
+    <button className="tarjeta" onClick={accion}>
+      <h3>{titulo}</h3>
+      <p>{descripcion}</p>
+      <span>Entrar →</span>
+    </button>
+  )
 
   return (
     <div className="app">
@@ -30,46 +81,108 @@ export default function App() {
       </header>
 
       <main className="principal">
-        <h2>¡Bienvenido a Campus ABC!</h2>
-        <p>Aprende, practica y desarrolla todo tu potencial académico.</p>
+        {pantalla !== 'inicio' && (
+          <button className="volver" onClick={volver}>
+            ← Regresar
+          </button>
+        )}
 
-        <h2>Selecciona tu especialidad</h2>
+        {pantalla === 'inicio' && (
+          <>
+            <h2>¡Bienvenido a Campus ABC!</h2>
+            <p>Selecciona tu especialidad y año de Bachillerato.</p>
 
-        <section className="especialidades">
-          {especialidades.map((item) => (
-            <article
-              key={item.nombre}
-              onClick={() => setEspecialidad(item.nombre)}
-              style={{
-                cursor: 'pointer',
-                border: especialidad === item.nombre
-                  ? '3px solid #2454a6'
-                  : '2px solid transparent'
-              }}
+            <div className="especialidades">
+              {Object.keys(materias).map((nombre) =>
+                tarjeta(
+                  nombre,
+                  'Explora tus asignaturas y actividades.',
+                  () => setEspecialidad(nombre)
+                )
+              )}
+            </div>
+
+            <h2>Selecciona tu año</h2>
+            <select
+              value={nivel}
+              onChange={(e) => setNivel(e.target.value)}
             >
-              <h3>{item.icono} {item.nombre}</h3>
-              <p>{item.descripcion}</p>
-            </article>
-          ))}
-        </section>
+              <option value="">Selecciona tu nivel</option>
+              {niveles.map((n) => <option key={n}>{n}</option>)}
+            </select>
 
-        <h2 style={{ marginTop: '35px' }}>Selecciona tu año</h2>
+            <button
+              className="continuar"
+              disabled={!especialidad || !nivel}
+              onClick={() => setPantalla('asignaturas')}
+            >
+              Continuar →
+            </button>
+          </>
+        )}
 
-        <select
-          value={nivel}
-          onChange={(e) => setNivel(e.target.value)}
-          style={{ padding: '12px', marginTop: '15px' }}
-        >
-          <option value="">Selecciona tu nivel</option>
-          <option>Primero de Bachillerato</option>
-          <option>Segundo de Bachillerato</option>
-          <option>Tercero de Bachillerato</option>
-        </select>
+        {pantalla === 'asignaturas' && (
+          <>
+            <h2>Asignaturas</h2>
+            <p>{especialidad} · {nivel}</p>
+            <div className="especialidades">
+              {materias[especialidad].map((nombre) =>
+                tarjeta(nombre, 'Cinco módulos de aprendizaje.', () => {
+                  setMateria(nombre)
+                  setPantalla('modulos')
+                })
+              )}
+            </div>
+          </>
+        )}
 
-        <p style={{ marginTop: '25px' }}>
-          {especialidad && `Especialidad: ${especialidad}`}
-        </p>
-        <p>{nivel && `Nivel: ${nivel}`}</p>
+        {pantalla === 'modulos' && (
+          <>
+            <h2>{materia}</h2>
+            <p>Selecciona un módulo.</p>
+            <div className="especialidades">
+              {modulos.map((nombre) =>
+                tarjeta(nombre, 'Cinco temas de aprendizaje.', () => {
+                  setModulo(nombre)
+                  setPantalla('temas')
+                })
+              )}
+            </div>
+          </>
+        )}
+
+        {pantalla === 'temas' && (
+          <>
+            <h2>{modulo}</h2>
+            <p>Selecciona un tema para estudiar.</p>
+            <div className="especialidades">
+              {[1, 2, 3, 4, 5].map((n) =>
+                tarjeta(`Tema ${n}`, 'Clase, ejemplos y actividades.', () => {
+                  setTema(`Tema ${n}`)
+                  setPantalla('clase')
+                })
+              )}
+            </div>
+          </>
+        )}
+
+        {pantalla === 'clase' && (
+          <>
+            <h2>{tema}</h2>
+            <p>{materia} · {modulo}</p>
+            <p>El contenido de la clase se incorporará en esta sección.</p>
+            <button className="continuar" onClick={() => setPantalla('actividades')}>
+              Ir a las actividades →
+            </button>
+          </>
+        )}
+
+        {pantalla === 'actividades' && (
+          <>
+            <h2>Actividades de {tema}</h2>
+            <p>Próximamente incorporaremos las cinco actividades con diez ejercicios cada una.</p>
+          </>
+        )}
       </main>
     </div>
   )
