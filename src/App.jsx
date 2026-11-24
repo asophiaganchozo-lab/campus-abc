@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { niveles, especialidades, curriculo } from './curriculo.js'
 import { actividades } from './actividades.js'
+import { lecciones } from './lecciones.js'
 import './styles.css'
 
 const normalizar = valor =>
@@ -32,25 +33,13 @@ function calificar(actividad, respuestas) {
   ejercicios.forEach((ejercicio, i) => {
     const respuesta = respuestas[i]
 
-    if (actividad.tipo === 'seleccion') {
-      if (
-        normalizar(respuesta) ===
-        normalizar(ejercicio.respuesta)
-      ) correctas++
-    }
-
-    if (actividad.tipo === 'completar') {
-      if (
-        normalizar(respuesta) ===
-        normalizar(ejercicio.respuesta)
-      ) correctas++
-    }
-
-    if (actividad.tipo === 'relacionar') {
-      if (
-        normalizar(respuesta) ===
-        normalizar(ejercicio.respuesta)
-      ) correctas++
+    if (
+      ['seleccion', 'completar', 'relacionar'].includes(
+        actividad.tipo
+      ) &&
+      normalizar(respuesta) === normalizar(ejercicio.respuesta)
+    ) {
+      correctas++
     }
 
     if (actividad.tipo === 'ordenar') {
@@ -63,11 +52,13 @@ function calificar(actividad, respuestas) {
           (paso, j) =>
             normalizar(paso) === normalizar(entregada[j])
         )
-      ) correctas++
+      ) {
+        correctas++
+      }
     }
 
-    if (actividad.tipo === 'casos') {
-      if (respuesta === true) correctas++
+    if (actividad.tipo === 'casos' && respuesta === true) {
+      correctas++
     }
   })
 
@@ -97,7 +88,7 @@ export default function App() {
     curriculo?.[especialidad]?.[nivel]?.[materia]
 
   const modulos = contenido?.modulos || []
-
+  const leccion = lecciones?.[tema]
   const actividadesTema = actividades?.[tema] || []
 
   const claveActividad = actividadActual
@@ -150,6 +141,7 @@ export default function App() {
 
   const enviarActividad = () => {
     const nuevoIntento = intentosUsados + 1
+
     const respuestasConIntento = {
       ...respuestas,
       intento: nuevoIntento
@@ -185,17 +177,11 @@ export default function App() {
       textAlign: 'left',
       boxShadow: '0 3px 12px rgba(0,0,0,0.06)'
     },
-    pregunta: {
-      borderBottom: '1px solid #e1e6ef',
-      padding: '18px 0'
-    },
-    opcion: {
-      display: 'block',
-      padding: '9px',
-      margin: '7px 0',
-      background: '#f2f5fb',
-      borderRadius: '8px',
-      cursor: 'pointer'
+    concepto: {
+      background: '#f4f7fc',
+      padding: '16px',
+      borderRadius: '10px',
+      margin: '12px 0'
     },
     campo: {
       width: '100%',
@@ -204,10 +190,18 @@ export default function App() {
       borderRadius: '8px',
       marginTop: '8px',
       fontSize: '15px'
+    },
+    opcion: {
+      display: 'block',
+      padding: '9px',
+      margin: '7px 0',
+      background: '#f2f5fb',
+      borderRadius: '8px',
+      cursor: 'pointer'
     }
   }
 
-  const mostrarCorreccion = (ejercicio, indice) => {
+  const mostrarCorreccion = ejercicio => {
     if (!resultado) return null
 
     return (
@@ -265,7 +259,9 @@ export default function App() {
                 tarjeta(
                   nombre,
                   'Explora tus asignaturas y contenidos.',
-                  () => setEspecialidad(nombre)
+                  () => {
+                    setEspecialidad(nombre)
+                  }
                 )
               )}
             </div>
@@ -333,9 +329,13 @@ export default function App() {
                 )}
               </div>
             ) : (
-              <p>
-                El currículo de esta asignatura todavía está en preparación.
-              </p>
+              <section style={estilos.panel}>
+                <h3>Currículo pendiente de completar</h3>
+                <p>
+                  Esta asignatura todavía no tiene sus módulos
+                  incorporados al currículo.
+                </p>
+              </section>
             )}
           </>
         )}
@@ -349,7 +349,7 @@ export default function App() {
               {(modulo?.temas || []).map((nombre, i) =>
                 tarjeta(
                   `Tema ${i + 1}: ${nombre}`,
-                  'Abrir clase y actividades.',
+                  'Estudiar conceptos, ejemplos y actividades.',
                   () => {
                     setTema(nombre)
                     setPantalla('clase')
@@ -365,28 +365,85 @@ export default function App() {
             <h2>{tema}</h2>
             <p>{materia} · {modulo?.nombre}</p>
 
-            <section style={estilos.panel}>
-              <h3>Objetivo de aprendizaje</h3>
-              <p>
-                Comprender y aplicar los conceptos relacionados con
-                {` ${tema.toLowerCase()}`} mediante análisis y práctica.
-              </p>
+            {leccion ? (
+              <>
+                <section style={estilos.panel}>
+                  <h3>🎯 Objetivo de aprendizaje</h3>
+                  <p>{leccion.objetivo}</p>
+                </section>
 
-              <h3 style={{ marginTop: '20px' }}>
-                Desarrollo de la clase
-              </h3>
-              <p>
-                En esta sección se incorporará la explicación completa,
-                los conceptos fundamentales, ejemplos resueltos y
-                aplicaciones prácticas de este tema.
-              </p>
+                <section style={estilos.panel}>
+                  <h3>📚 Conceptos y explicaciones</h3>
+                  <p>
+                    Lee con atención cada concepto antes de
+                    realizar las actividades.
+                  </p>
 
-              <h3 style={{ marginTop: '20px' }}>Aplicación</h3>
-              <p>
-                El estudiante trabajará con situaciones y problemas
-                relacionados con los contenidos estudiados.
-              </p>
-            </section>
+                  {(leccion.conceptos || []).map((concepto, i) => (
+                    <article
+                      key={i}
+                      style={estilos.concepto}
+                    >
+                      <h3>{i + 1}. {concepto.titulo}</h3>
+                      <p>{concepto.texto}</p>
+                    </article>
+                  ))}
+                </section>
+
+                {leccion.ejemplo && (
+                  <section style={estilos.panel}>
+                    <h3>💡 {leccion.ejemplo.titulo}</h3>
+
+                    <ol>
+                      {(leccion.ejemplo.pasos || []).map(
+                        (paso, i) => (
+                          <li key={i} style={{ margin: '10px 0' }}>
+                            {paso}
+                          </li>
+                        )
+                      )}
+                    </ol>
+
+                    <h4>Solución explicada</h4>
+                    <p>{leccion.ejemplo.solucion}</p>
+                  </section>
+                )}
+
+                {leccion.video && (
+                  <section style={estilos.panel}>
+                    <h3>🎥 Video educativo</h3>
+                    <p>{leccion.video.titulo}</p>
+                    <p>
+                      Abre el recurso audiovisual para reforzar
+                      lo aprendido.
+                    </p>
+                    <a
+                      href={leccion.video.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="continuar"
+                      style={{
+                        display: 'inline-block',
+                        textDecoration: 'none',
+                        color: 'white',
+                        padding: '12px 18px',
+                        borderRadius: '8px'
+                      }}
+                    >
+                      Ver video educativo →
+                    </a>
+                  </section>
+                )}
+              </>
+            ) : (
+              <section style={estilos.panel}>
+                <h3>Lección pendiente de incorporar</h3>
+                <p>
+                  Todavía no se ha creado la explicación de este
+                  tema. Estamos completando los contenidos.
+                </p>
+              </section>
+            )}
 
             <button
               className="continuar"
@@ -415,9 +472,10 @@ export default function App() {
               </div>
             ) : (
               <section style={estilos.panel}>
-                <h3>Actividades en preparación</h3>
+                <h3>Actividades pendientes</h3>
                 <p>
-                  Todavía no se han incorporado actividades para este tema.
+                  Todavía no se han incorporado actividades para
+                  este tema.
                 </p>
               </section>
             )}
@@ -431,139 +489,131 @@ export default function App() {
               Intento {intentosUsados + (resultado ? 0 : 1)} de 3
             </p>
 
-            {intentosUsados >= 3 && !resultado && (
-              <p>Ya utilizaste las tres oportunidades de esta actividad.</p>
-            )}
-
             {obtenerEjercicios(actividadActual).map(
               (ejercicio, i) => (
-                <section
-                  key={i}
-                  style={estilos.panel}
-                >
-                  <div style={estilos.pregunta}>
-                    <h3>
-                      {i + 1}. {ejercicio.pregunta || ejercicio.concepto}
-                    </h3>
+                <section key={i} style={estilos.panel}>
+                  <h3>
+                    {i + 1}. {ejercicio.pregunta || ejercicio.concepto}
+                  </h3>
 
-                    {actividadActual.tipo === 'seleccion' && (
-                      <div style={{ marginTop: '12px' }}>
-                        {(ejercicio.opciones || []).map((opcion, j) => (
-                          <label key={j} style={estilos.opcion}>
-                            <input
-                              type="radio"
-                              name={`pregunta-${i}`}
-                              value={opcion}
-                              disabled={!!resultado || intentosUsados >= 3}
-                              checked={respuestas[i] === opcion}
-                              onChange={() => actualizarRespuesta(i, opcion)}
-                            />{' '}
-                            {opcion}
-                          </label>
-                        ))}
-                      </div>
-                    )}
+                  {actividadActual.tipo === 'seleccion' && (
+                    <div>
+                      {(ejercicio.opciones || []).map((opcion, j) => (
+                        <label key={j} style={estilos.opcion}>
+                          <input
+                            type="radio"
+                            name={`pregunta-${i}`}
+                            value={opcion}
+                            disabled={!!resultado || intentosUsados >= 3}
+                            checked={respuestas[i] === opcion}
+                            onChange={() =>
+                              actualizarRespuesta(i, opcion)
+                            }
+                          />{' '}
+                          {opcion}
+                        </label>
+                      ))}
+                    </div>
+                  )}
 
-                    {actividadActual.tipo === 'completar' && (
-                      <input
+                  {actividadActual.tipo === 'completar' && (
+                    <input
+                      style={estilos.campo}
+                      placeholder="Escribe tu respuesta..."
+                      value={respuestas[i] || ''}
+                      disabled={!!resultado || intentosUsados >= 3}
+                      onChange={e =>
+                        actualizarRespuesta(i, e.target.value)
+                      }
+                    />
+                  )}
+
+                  {actividadActual.tipo === 'relacionar' && (
+                    <select
+                      style={estilos.campo}
+                      value={respuestas[i] || ''}
+                      disabled={!!resultado || intentosUsados >= 3}
+                      onChange={e =>
+                        actualizarRespuesta(i, e.target.value)
+                      }
+                    >
+                      <option value="">Selecciona la relación</option>
+                      {obtenerEjercicios(actividadActual).map(
+                        (par, j) => (
+                          <option key={j} value={par.respuesta}>
+                            {par.respuesta}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  )}
+
+                  {actividadActual.tipo === 'ordenar' && (
+                    <div>
+                      <p>Selecciona los pasos en el orden correcto:</p>
+                      {(ejercicio.pasos || []).map((paso, j) => (
+                        <label
+                          key={j}
+                          style={{ display: 'block', margin: '8px 0' }}
+                        >
+                          Posición {j + 1}
+                          <select
+                            style={estilos.campo}
+                            value={(respuestas[i] || [])[j] || ''}
+                            disabled={!!resultado || intentosUsados >= 3}
+                            onChange={e => {
+                              const actual = [
+                                ...(respuestas[i] || [])
+                              ]
+                              actual[j] = e.target.value
+                              actualizarRespuesta(i, actual)
+                            }}
+                          >
+                            <option value="">Selecciona un paso</option>
+                            {(ejercicio.pasos || []).map(
+                              (opcion, k) => (
+                                <option key={k} value={opcion}>
+                                  {opcion}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
+                  {actividadActual.tipo === 'casos' && (
+                    <div>
+                      <textarea
                         style={estilos.campo}
-                        placeholder="Escribe tu respuesta..."
-                        value={respuestas[i] || ''}
+                        rows="4"
+                        placeholder="Escribe tu análisis y solución..."
                         disabled={!!resultado || intentosUsados >= 3}
+                        value={respuestas[`texto-${i}`] || ''}
                         onChange={e =>
-                          actualizarRespuesta(i, e.target.value)
+                          actualizarRespuesta(`texto-${i}`, e.target.value)
                         }
                       />
-                    )}
 
-                    {actividadActual.tipo === 'relacionar' && (
-                      <select
-                        style={estilos.campo}
-                        value={respuestas[i] || ''}
-                        disabled={!!resultado || intentosUsados >= 3}
-                        onChange={e =>
-                          actualizarRespuesta(i, e.target.value)
-                        }
-                      >
-                        <option value="">Selecciona la relación</option>
-                        {obtenerEjercicios(actividadActual).map(
-                          (par, j) => (
-                            <option key={j} value={par.respuesta}>
-                              {par.respuesta}
-                            </option>
-                          )
-                        )}
-                      </select>
-                    )}
+                      {!resultado && (
+                        <label style={estilos.opcion}>
+                          <input
+                            type="checkbox"
+                            checked={respuestas[i] === true}
+                            disabled={intentosUsados >= 3}
+                            onChange={e =>
+                              actualizarRespuesta(i, e.target.checked)
+                            }
+                          />{' '}
+                          Considero que mi respuesta incluye las
+                          ideas principales de la solución.
+                        </label>
+                      )}
+                    </div>
+                  )}
 
-                    {actividadActual.tipo === 'ordenar' && (
-                      <div>
-                        <p>Selecciona los pasos en el orden correcto:</p>
-                        {(ejercicio.pasos || []).map((paso, j) => (
-                          <div key={j} style={{ margin: '8px 0' }}>
-                            <label>
-                              Posición {j + 1}
-                              <select
-                                style={estilos.campo}
-                                value={
-                                  (respuestas[i] || [])[j] || ''
-                                }
-                                disabled={!!resultado || intentosUsados >= 3}
-                                onChange={e => {
-                                  const actual = [
-                                    ...(respuestas[i] || [])
-                                  ]
-                                  actual[j] = e.target.value
-                                  actualizarRespuesta(i, actual)
-                                }}
-                              >
-                                <option value="">Selecciona un paso</option>
-                                {(ejercicio.pasos || []).map(
-                                  (opcion, k) => (
-                                    <option key={k} value={opcion}>
-                                      {opcion}
-                                    </option>
-                                  )
-                                )}
-                              </select>
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {actividadActual.tipo === 'casos' && (
-                      <div>
-                        <textarea
-                          style={estilos.campo}
-                          rows="4"
-                          placeholder="Escribe tu análisis y solución..."
-                          disabled={!!resultado || intentosUsados >= 3}
-                          value={respuestas[`texto-${i}`] || ''}
-                          onChange={e =>
-                            actualizarRespuesta(`texto-${i}`, e.target.value)
-                          }
-                        />
-
-                        {!resultado && (
-                          <label style={estilos.opcion}>
-                            <input
-                              type="checkbox"
-                              checked={respuestas[i] === true}
-                              disabled={intentosUsados >= 3}
-                              onChange={e =>
-                                actualizarRespuesta(i, e.target.checked)
-                              }
-                            />{' '}
-                            Considero que mi respuesta incluye las ideas
-                            principales de la solución.
-                          </label>
-                        )}
-                      </div>
-                    )}
-
-                    {mostrarCorreccion(ejercicio, i)}
-                  </div>
+                  {mostrarCorreccion(ejercicio)}
                 </section>
               )
             )}
@@ -575,16 +625,14 @@ export default function App() {
                   Respuestas correctas: {resultado.correctas} de{' '}
                   {resultado.total}
                 </p>
-                <p>
-                  Calificación: {resultado.nota} / 10
-                </p>
+                <p>Calificación: {resultado.nota} / 10</p>
                 <p>
                   Oportunidad utilizada: {resultado.intento} de 3
                 </p>
                 {actividadActual.tipo === 'casos' && (
                   <p>
-                    Los casos prácticos se califican mediante
-                    autoevaluación. Revisa las respuestas orientativas.
+                    Los casos prácticos utilizan autoevaluación.
+                    Revisa las respuestas orientativas.
                   </p>
                 )}
               </section>
