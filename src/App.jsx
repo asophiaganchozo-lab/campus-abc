@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-
+import { curriculo } from './curriculo.js'
 const materias = {
   Informatica: [
     'Programación y Desarrollo de Software',
