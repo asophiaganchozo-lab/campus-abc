@@ -13,6 +13,81 @@ const normalizar = valor =>
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/\s+/g, ' ')
 
+// LOGO VECTORIAL DE CAMPUS ABC
+function LogoCampus() {
+  return (
+    <svg
+      viewBox="0 0 150 120"
+      width="100"
+      height="80"
+      role="img"
+      aria-label="Logo Campus ABC: birrete y computadora"
+    >
+      <defs>
+        <linearGradient id="oroCampus" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f5dfa0" />
+          <stop offset="100%" stopColor="#d6b35a" />
+        </linearGradient>
+      </defs>
+
+      {/* Birrete */}
+      <path
+        d="M15 34 L74 9 L135 34 L75 59 Z"
+        fill="url(#oroCampus)"
+        stroke="#f6e5b8"
+        strokeWidth="2"
+      />
+      <path
+        d="M39 46 L39 66 Q75 88 111 66 L111 46 L75 62 Z"
+        fill="#382254"
+        stroke="#d6b35a"
+        strokeWidth="2"
+      />
+      <path
+        d="M135 34 L135 65"
+        stroke="#ead49a"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <circle cx="135" cy="69" r="5" fill="#d6b35a" />
+
+      {/* Computadora */}
+      <rect
+        x="38"
+        y="77"
+        width="75"
+        height="34"
+        rx="5"
+        fill="#ead49a"
+        stroke="#d6b35a"
+        strokeWidth="3"
+      />
+      <rect
+        x="44"
+        y="82"
+        width="63"
+        height="23"
+        rx="2"
+        fill="#24143d"
+      />
+      <path
+        d="M28 114 H123 L115 119 H36 Z"
+        fill="url(#oroCampus)"
+      />
+      <text
+        x="75"
+        y="99"
+        textAnchor="middle"
+        fontSize="13"
+        fontWeight="bold"
+        fill="#ead49a"
+      >
+        ABC
+      </text>
+    </svg>
+  )
+}
+
 function obtenerEjercicios(actividad) {
   if (actividad.tipo === 'relacionar') {
     const pares = actividad.ejercicios?.[0]?.pares || []
@@ -48,8 +123,7 @@ function calificar(actividad, respuestas, intento) {
       if (
         correcta.length === entregada.length &&
         correcta.every(
-          (paso, j) =>
-            normalizar(paso) === normalizar(entregada[j])
+          (paso, j) => normalizar(paso) === normalizar(entregada[j])
         )
       ) {
         correctas++
@@ -154,7 +228,6 @@ export default function App() {
       >
         {icono}
       </span>
-
       <h3>{titulo}</h3>
       <p>{descripcion}</p>
       <span>Entrar →</span>
@@ -231,18 +304,24 @@ export default function App() {
   return (
     <div className="app">
 
-      {/* ENCABEZADO PRINCIPAL */}
+      {/* ENCABEZADO CON LOGO CAMPUS ABC */}
 
       <header className="header">
-        <div style={{ fontSize: '42px', marginBottom: '8px' }}>
-          🎓 💻
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '16px',
+            flexWrap: 'wrap',
+            marginBottom: '8px'
+          }}
+        >
+          <LogoCampus />
+          <h1 style={{ margin: 0 }}>Campus ABC</h1>
         </div>
 
-        <h1>Campus ABC</h1>
-
-        <p>
-          Aprende, descubre y transforma tu futuro
-        </p>
+        <p>Aprende, descubre y transforma tu futuro</p>
       </header>
 
       <main className="principal">
@@ -270,7 +349,6 @@ export default function App() {
             </p>
 
             <h2>Informática</h2>
-
             <p>Asignaturas de formación técnica.</p>
 
             <div className="especialidades">
@@ -278,19 +356,13 @@ export default function App() {
                 tarjeta(
                   nombre,
                   'Explora módulos, lecciones, ejemplos, videos y actividades.',
-                  () => {
-                    setMateria(nombre)
-                    setModulo(null)
-                    setTema('')
-                    setPantalla('modulos')
-                  },
+                  () => seleccionarMateria(nombre),
                   iconosMaterias[nombre] || '💻'
                 )
               )}
             </div>
 
             <h2>Materias comunes</h2>
-
             <p>Asignaturas de formación general.</p>
 
             <div className="especialidades">
@@ -298,12 +370,7 @@ export default function App() {
                 tarjeta(
                   nombre,
                   'Aprende nuevos contenidos y fortalece tus conocimientos.',
-                  () => {
-                    setMateria(nombre)
-                    setModulo(null)
-                    setTema('')
-                    setPantalla('modulos')
-                  },
+                  () => seleccionarMateria(nombre),
                   iconosMaterias[nombre] || '📚'
                 )
               )}
@@ -338,7 +405,6 @@ export default function App() {
             ) : (
               <section className="panel">
                 <h3>Contenido en preparación</h3>
-
                 <p>
                   Esta asignatura está incorporada al campus.
                   Estamos preparando sus módulos, clases,
@@ -354,7 +420,6 @@ export default function App() {
         {pantalla === 'temas' && (
           <>
             <h2>{modulo?.nombre}</h2>
-
             <p>Selecciona un tema para estudiar.</p>
 
             <div className="especialidades">
@@ -392,7 +457,6 @@ export default function App() {
 
                 <section className="panel">
                   <h3>📚 Conceptos y explicaciones</h3>
-
                   <p>
                     Lee con atención cada concepto antes
                     de realizar las actividades.
@@ -403,7 +467,6 @@ export default function App() {
                       <h3>
                         {i + 1}. {concepto.titulo}
                       </h3>
-
                       <p>{concepto.texto}</p>
                     </article>
                   ))}
@@ -413,7 +476,6 @@ export default function App() {
                   <section className="panel">
                     <div className="ejemplo">
                       <h3>💡 {leccion.ejemplo.titulo}</h3>
-
                       <ol>
                         {(leccion.ejemplo.pasos || []).map((paso, i) => (
                           <li key={i} style={{ margin: '10px 0' }}>
@@ -421,7 +483,6 @@ export default function App() {
                           </li>
                         ))}
                       </ol>
-
                       <h4>Solución explicada</h4>
                       <p>{leccion.ejemplo.solucion}</p>
                     </div>
@@ -431,13 +492,10 @@ export default function App() {
                 {leccion.video && (
                   <section className="panel">
                     <h3>🎥 Video educativo</h3>
-
                     <p>{leccion.video.titulo}</p>
-
                     <p>
                       Refuerza lo aprendido con este recurso audiovisual.
                     </p>
-
                     <a
                       href={leccion.video.url}
                       target="_blank"
@@ -457,7 +515,6 @@ export default function App() {
             ) : (
               <section className="panel">
                 <h3>Lección pendiente de incorporar</h3>
-
                 <p>
                   Estamos preparando la explicación completa,
                   los ejemplos y los recursos educativos de este tema.
@@ -480,7 +537,6 @@ export default function App() {
         {pantalla === 'actividades' && (
           <>
             <h2>Actividades de aprendizaje</h2>
-
             <p>{tema}</p>
 
             {actividadesTema.length > 0 ? (
@@ -497,7 +553,6 @@ export default function App() {
             ) : (
               <section className="panel">
                 <h3>Actividades pendientes</h3>
-
                 <p>
                   Estamos preparando ejercicios variados
                   y funcionales para este tema.
@@ -535,9 +590,7 @@ export default function App() {
                           value={opcion}
                           disabled={!!resultado || intentosUsados >= 3}
                           checked={respuestas[i] === opcion}
-                          onChange={() =>
-                            actualizarRespuesta(i, opcion)
-                          }
+                          onChange={() => actualizarRespuesta(i, opcion)}
                         />{' '}
                         {opcion}
                       </label>
@@ -553,9 +606,7 @@ export default function App() {
                     placeholder="Escribe tu respuesta..."
                     value={respuestas[i] || ''}
                     disabled={!!resultado || intentosUsados >= 3}
-                    onChange={e =>
-                      actualizarRespuesta(i, e.target.value)
-                    }
+                    onChange={e => actualizarRespuesta(i, e.target.value)}
                   />
                 )}
 
@@ -566,12 +617,9 @@ export default function App() {
                     className="campo"
                     value={respuestas[i] || ''}
                     disabled={!!resultado || intentosUsados >= 3}
-                    onChange={e =>
-                      actualizarRespuesta(i, e.target.value)
-                    }
+                    onChange={e => actualizarRespuesta(i, e.target.value)}
                   >
                     <option value="">Selecciona la relación</option>
-
                     {obtenerEjercicios(actividadActual).map((par, j) => (
                       <option key={j} value={par.respuesta}>
                         {par.respuesta}
@@ -591,28 +639,20 @@ export default function App() {
                     {(ejercicio.pasos || []).map((paso, j) => (
                       <label
                         key={j}
-                        style={{
-                          display: 'block',
-                          margin: '12px 0'
-                        }}
+                        style={{ display: 'block', margin: '12px 0' }}
                       >
                         Posición {j + 1}
-
                         <select
                           className="campo"
                           value={(respuestas[i] || [])[j] || ''}
                           disabled={!!resultado || intentosUsados >= 3}
                           onChange={e => {
-                            const actual = [
-                              ...(respuestas[i] || [])
-                            ]
-
+                            const actual = [...(respuestas[i] || [])]
                             actual[j] = e.target.value
                             actualizarRespuesta(i, actual)
                           }}
                         >
                           <option value="">Selecciona un paso</option>
-
                           {(ejercicio.pasos || []).map((opcion, k) => (
                             <option key={k} value={opcion}>
                               {opcion}
@@ -635,10 +675,7 @@ export default function App() {
                       disabled={!!resultado || intentosUsados >= 3}
                       value={respuestas[`texto-${i}`] || ''}
                       onChange={e =>
-                        actualizarRespuesta(
-                          `texto-${i}`,
-                          e.target.value
-                        )
+                        actualizarRespuesta(`texto-${i}`, e.target.value)
                       }
                     />
 
@@ -668,20 +705,14 @@ export default function App() {
             {resultado && (
               <section className="panel">
                 <h3>🏆 Resultado de tu actividad</h3>
-
                 <p>
                   Respuestas correctas: {resultado.correctas} de{' '}
                   {resultado.total}
                 </p>
-
-                <p>
-                  Calificación: {resultado.nota} / 10
-                </p>
-
+                <p>Calificación: {resultado.nota} / 10</p>
                 <p>
                   Oportunidad utilizada: {resultado.intento} de 3
                 </p>
-
                 {actividadActual.tipo === 'casos' && (
                   <p>
                     Los casos prácticos utilizan autoevaluación.
