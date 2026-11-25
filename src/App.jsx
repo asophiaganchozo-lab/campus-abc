@@ -30,28 +30,29 @@ function LogoCampus() {
         </linearGradient>
       </defs>
 
-      {/* Birrete */}
       <path
         d="M15 34 L74 9 L135 34 L75 59 Z"
         fill="url(#oroCampus)"
         stroke="#f6e5b8"
         strokeWidth="2"
       />
+
       <path
         d="M39 46 L39 66 Q75 88 111 66 L111 46 L75 62 Z"
         fill="#382254"
         stroke="#d6b35a"
         strokeWidth="2"
       />
+
       <path
         d="M135 34 L135 65"
         stroke="#ead49a"
         strokeWidth="4"
         strokeLinecap="round"
       />
+
       <circle cx="135" cy="69" r="5" fill="#d6b35a" />
 
-      {/* Computadora */}
       <rect
         x="38"
         y="77"
@@ -62,6 +63,7 @@ function LogoCampus() {
         stroke="#d6b35a"
         strokeWidth="3"
       />
+
       <rect
         x="44"
         y="82"
@@ -70,10 +72,12 @@ function LogoCampus() {
         rx="2"
         fill="#24143d"
       />
+
       <path
         d="M28 114 H123 L115 119 H36 Z"
         fill="url(#oroCampus)"
       />
+
       <text
         x="75"
         y="99"
@@ -228,6 +232,7 @@ export default function App() {
       >
         {icono}
       </span>
+
       <h3>{titulo}</h3>
       <p>{descripcion}</p>
       <span>Entrar →</span>
@@ -321,7 +326,10 @@ export default function App() {
           <h1 style={{ margin: 0 }}>Campus ABC</h1>
         </div>
 
-        <p>Aprende, descubre y transforma tu futuro</p>
+        <p>
+          Descubre tus talentos, fortalece tus conocimientos
+          y construye un futuro lleno de grandes oportunidades.
+        </p>
       </header>
 
       <main className="principal">
@@ -753,8 +761,12 @@ export default function App() {
 
       <footer>
         <p>Campus ABC · Tu aprendizaje, nuestra misión</p>
-        <p>Aprende, descubre y transforma tu futuro.</p>
+        <p>
+          Descubre tus talentos, fortalece tus conocimientos
+          y construye un futuro lleno de grandes oportunidades.
+        </p>
       </footer>
     </div>
   )
 }
+
