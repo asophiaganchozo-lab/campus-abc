@@ -70,6 +70,24 @@ function calificar(actividad, respuestas, intento) {
   return { correctas, total, nota, notaMaxima }
 }
 
+const iconosMaterias = {
+  'Programación y Desarrollo de Software': '💻',
+  'Diseño y Desarrollo Web': '🌐',
+  'Bases de Datos': '🗄️',
+  'Sistemas Operativos': '⚙️',
+  'Redes y Conectividad': '🔗',
+  'Soporte Técnico y Mantenimiento': '🛠️',
+  'Aplicaciones Ofimáticas': '📊',
+  'Seguridad Informática': '🔐',
+  'Inteligencia Artificial Aplicada': '🤖',
+  'Ética, Legislación y Ciudadanía Digital': '⚖️',
+  'Matemáticas': '📐',
+  'Física': '🔬',
+  'Lengua y Literatura': '📖',
+  'Inglés': '🌎',
+  'Emprendimiento y Gestión': '📈'
+}
+
 export default function App() {
   const [pantalla, setPantalla] = useState('inicio')
   const [materia, setMateria] = useState('')
@@ -80,8 +98,8 @@ export default function App() {
   const [intentos, setIntentos] = useState({})
   const [resultado, setResultado] = useState(null)
 
-  // El currículo contiene directamente una lista de módulos.
   const contenido = curriculo?.[materia]
+
   const modulos = Array.isArray(contenido)
     ? contenido
     : contenido?.modulos || []
@@ -113,25 +131,35 @@ export default function App() {
     setRespuestas({})
   }
 
-  const tarjeta = (titulo, descripcion, accion) => (
-    <button
-      className="tarjeta"
-      onClick={accion}
-      key={titulo}
-      type="button"
-    >
-      <h3>{titulo}</h3>
-      <p>{descripcion}</p>
-      <span>Entrar →</span>
-    </button>
-  )
-
   const seleccionarMateria = nombre => {
     setMateria(nombre)
     setModulo(null)
     setTema('')
     setPantalla('modulos')
   }
+
+  const tarjeta = (titulo, descripcion, accion, icono = '✦') => (
+    <button
+      className="tarjeta"
+      onClick={accion}
+      key={titulo}
+      type="button"
+    >
+      <span
+        style={{
+          display: 'block',
+          fontSize: '34px',
+          marginBottom: '14px'
+        }}
+      >
+        {icono}
+      </span>
+
+      <h3>{titulo}</h3>
+      <p>{descripcion}</p>
+      <span>Entrar →</span>
+    </button>
+  )
 
   const abrirActividad = actividad => {
     setActividadActual(actividad)
@@ -172,44 +200,11 @@ export default function App() {
     setResultado(null)
   }
 
-  const estilos = {
-    panel: {
-      background: 'white',
-      padding: '22px',
-      borderRadius: '14px',
-      margin: '20px 0',
-      textAlign: 'left',
-      boxShadow: '0 3px 12px rgba(0,0,0,0.06)'
-    },
-    concepto: {
-      background: '#f4f7fc',
-      padding: '16px',
-      borderRadius: '10px',
-      margin: '12px 0'
-    },
-    campo: {
-      width: '100%',
-      padding: '12px',
-      border: '1px solid #ccd4e2',
-      borderRadius: '8px',
-      marginTop: '8px',
-      fontSize: '15px'
-    },
-    opcion: {
-      display: 'block',
-      padding: '9px',
-      margin: '7px 0',
-      background: '#f2f5fb',
-      borderRadius: '8px',
-      cursor: 'pointer'
-    }
-  }
-
   const mostrarCorreccion = ejercicio => {
     if (!resultado) return null
 
     return (
-      <div style={{ marginTop: '10px', fontSize: '14px' }}>
+      <div style={{ marginTop: '14px' }}>
         {actividadActual.tipo === 'casos' ? (
           <p>
             <strong>Respuesta orientativa:</strong>{' '}
@@ -225,7 +220,7 @@ export default function App() {
         )}
 
         {ejercicio.explicacion && (
-          <p style={{ color: '#596579', marginTop: '6px' }}>
+          <p style={{ marginTop: '8px' }}>
             {ejercicio.explicacion}
           </p>
         )}
@@ -235,12 +230,23 @@ export default function App() {
 
   return (
     <div className="app">
+
+      {/* ENCABEZADO PRINCIPAL */}
+
       <header className="header">
-        <h1>🎓 Campus ABC</h1>
-        <p>Tu espacio de aprendizaje virtual</p>
+        <div style={{ fontSize: '42px', marginBottom: '8px' }}>
+          🎓 💻
+        </div>
+
+        <h1>Campus ABC</h1>
+
+        <p>
+          Aprende, descubre y transforma tu futuro
+        </p>
       </header>
 
       <main className="principal">
+
         {pantalla !== 'inicio' && (
           <button
             className="volver"
@@ -251,63 +257,88 @@ export default function App() {
           </button>
         )}
 
+        {/* INICIO */}
+
         {pantalla === 'inicio' && (
           <>
-            <h2>¡Bienvenido a Campus ABC!</h2>
+            <h2>¡Bienvenidos a Campus ABC!</h2>
+
             <p>
-              Explora nuestras asignaturas, aprende y desarrolla
-              tus conocimientos.
+              Tu espacio de aprendizaje virtual.
+              Explora nuestras asignaturas y desarrolla
+              nuevos conocimientos.
             </p>
 
             <h2>Informática</h2>
+
             <p>Asignaturas de formación técnica.</p>
 
             <div className="especialidades">
               {(especialidades?.['Informática'] || []).map(nombre =>
                 tarjeta(
                   nombre,
-                  'Explora los módulos, las clases, los videos y las actividades.',
-                  () => seleccionarMateria(nombre)
+                  'Explora módulos, lecciones, ejemplos, videos y actividades.',
+                  () => {
+                    setMateria(nombre)
+                    setModulo(null)
+                    setTema('')
+                    setPantalla('modulos')
+                  },
+                  iconosMaterias[nombre] || '💻'
                 )
               )}
             </div>
 
             <h2>Materias comunes</h2>
+
             <p>Asignaturas de formación general.</p>
 
             <div className="especialidades">
               {(especialidades?.['Asignaturas básicas'] || []).map(nombre =>
                 tarjeta(
                   nombre,
-                  'Explora los contenidos y desarrolla tus conocimientos.',
-                  () => seleccionarMateria(nombre)
+                  'Aprende nuevos contenidos y fortalece tus conocimientos.',
+                  () => {
+                    setMateria(nombre)
+                    setModulo(null)
+                    setTema('')
+                    setPantalla('modulos')
+                  },
+                  iconosMaterias[nombre] || '📚'
                 )
               )}
             </div>
           </>
         )}
 
+        {/* MÓDULOS */}
+
         {pantalla === 'modulos' && (
           <>
             <h2>{materia}</h2>
-            <p>Formación académica · 5 módulos de aprendizaje</p>
+
+            <p>
+              Formación académica · 5 módulos de aprendizaje
+            </p>
 
             {modulos.length > 0 ? (
               <div className="especialidades">
-                {modulos.map(item =>
+                {modulos.map((item, i) =>
                   tarjeta(
-                    item.nombre,
+                    `Módulo ${i + 1}: ${item.nombre}`,
                     `${(item.temas || []).length} temas de aprendizaje`,
                     () => {
                       setModulo(item)
                       setPantalla('temas')
-                    }
+                    },
+                    '📘'
                   )
                 )}
               </div>
             ) : (
-              <section style={estilos.panel}>
+              <section className="panel">
                 <h3>Contenido en preparación</h3>
+
                 <p>
                   Esta asignatura está incorporada al campus.
                   Estamos preparando sus módulos, clases,
@@ -318,9 +349,12 @@ export default function App() {
           </>
         )}
 
+        {/* TEMAS */}
+
         {pantalla === 'temas' && (
           <>
             <h2>{modulo?.nombre}</h2>
+
             <p>Selecciona un tema para estudiar.</p>
 
             <div className="especialidades">
@@ -331,64 +365,79 @@ export default function App() {
                   () => {
                     setTema(nombre)
                     setPantalla('clase')
-                  }
+                  },
+                  '📖'
                 )
               )}
             </div>
           </>
         )}
 
+        {/* LECCIÓN */}
+
         {pantalla === 'clase' && (
           <>
             <h2>{tema}</h2>
-            <p>{materia} · {modulo?.nombre}</p>
+
+            <p>
+              {materia} · {modulo?.nombre}
+            </p>
 
             {leccion ? (
               <>
-                <section style={estilos.panel}>
+                <section className="panel">
                   <h3>🎯 Objetivo de aprendizaje</h3>
                   <p>{leccion.objetivo}</p>
                 </section>
 
-                <section style={estilos.panel}>
+                <section className="panel">
                   <h3>📚 Conceptos y explicaciones</h3>
+
                   <p>
-                    Lee con atención cada concepto antes de realizar
-                    las actividades.
+                    Lee con atención cada concepto antes
+                    de realizar las actividades.
                   </p>
 
                   {(leccion.conceptos || []).map((concepto, i) => (
-                    <article key={i} style={estilos.concepto}>
-                      <h3>{i + 1}. {concepto.titulo}</h3>
+                    <article className="concepto" key={i}>
+                      <h3>
+                        {i + 1}. {concepto.titulo}
+                      </h3>
+
                       <p>{concepto.texto}</p>
                     </article>
                   ))}
                 </section>
 
                 {leccion.ejemplo && (
-                  <section style={estilos.panel}>
-                    <h3>💡 {leccion.ejemplo.titulo}</h3>
+                  <section className="panel">
+                    <div className="ejemplo">
+                      <h3>💡 {leccion.ejemplo.titulo}</h3>
 
-                    <ol>
-                      {(leccion.ejemplo.pasos || []).map((paso, i) => (
-                        <li key={i} style={{ margin: '10px 0' }}>
-                          {paso}
-                        </li>
-                      ))}
-                    </ol>
+                      <ol>
+                        {(leccion.ejemplo.pasos || []).map((paso, i) => (
+                          <li key={i} style={{ margin: '10px 0' }}>
+                            {paso}
+                          </li>
+                        ))}
+                      </ol>
 
-                    <h4>Solución explicada</h4>
-                    <p>{leccion.ejemplo.solucion}</p>
+                      <h4>Solución explicada</h4>
+                      <p>{leccion.ejemplo.solucion}</p>
+                    </div>
                   </section>
                 )}
 
                 {leccion.video && (
-                  <section style={estilos.panel}>
+                  <section className="panel">
                     <h3>🎥 Video educativo</h3>
+
                     <p>{leccion.video.titulo}</p>
+
                     <p>
                       Refuerza lo aprendido con este recurso audiovisual.
                     </p>
+
                     <a
                       href={leccion.video.url}
                       target="_blank"
@@ -397,9 +446,7 @@ export default function App() {
                       style={{
                         display: 'inline-block',
                         textDecoration: 'none',
-                        color: 'white',
-                        padding: '12px 18px',
-                        borderRadius: '8px'
+                        marginTop: '10px'
                       }}
                     >
                       Ver video educativo →
@@ -408,8 +455,9 @@ export default function App() {
                 )}
               </>
             ) : (
-              <section style={estilos.panel}>
+              <section className="panel">
                 <h3>Lección pendiente de incorporar</h3>
+
                 <p>
                   Estamos preparando la explicación completa,
                   los ejemplos y los recursos educativos de este tema.
@@ -427,9 +475,12 @@ export default function App() {
           </>
         )}
 
+        {/* ACTIVIDADES */}
+
         {pantalla === 'actividades' && (
           <>
             <h2>Actividades de aprendizaje</h2>
+
             <p>{tema}</p>
 
             {actividadesTema.length > 0 ? (
@@ -438,46 +489,55 @@ export default function App() {
                   tarjeta(
                     actividad.nombre || `Actividad ${i + 1}`,
                     `${obtenerEjercicios(actividad).length} ejercicios`,
-                    () => abrirActividad(actividad)
+                    () => abrirActividad(actividad),
+                    '✏️'
                   )
                 )}
               </div>
             ) : (
-              <section style={estilos.panel}>
+              <section className="panel">
                 <h3>Actividades pendientes</h3>
+
                 <p>
-                  Estamos preparando ejercicios variados y
-                  funcionales para este tema.
+                  Estamos preparando ejercicios variados
+                  y funcionales para este tema.
                 </p>
               </section>
             )}
           </>
         )}
 
+        {/* EJERCICIOS */}
+
         {pantalla === 'ejercicio' && actividadActual && (
           <>
             <h2>{actividadActual.nombre}</h2>
+
             <p>
               Intento {intentosUsados + (resultado ? 0 : 1)} de 3
             </p>
 
             {obtenerEjercicios(actividadActual).map((ejercicio, i) => (
-              <section key={i} style={estilos.panel}>
+              <section className="panel" key={i}>
                 <h3>
                   {i + 1}. {ejercicio.pregunta || ejercicio.concepto}
                 </h3>
 
+                {/* SELECCIÓN MÚLTIPLE */}
+
                 {actividadActual.tipo === 'seleccion' && (
                   <div>
                     {(ejercicio.opciones || []).map((opcion, j) => (
-                      <label key={j} style={estilos.opcion}>
+                      <label className="opcion" key={j}>
                         <input
                           type="radio"
                           name={`pregunta-${i}`}
                           value={opcion}
                           disabled={!!resultado || intentosUsados >= 3}
                           checked={respuestas[i] === opcion}
-                          onChange={() => actualizarRespuesta(i, opcion)}
+                          onChange={() =>
+                            actualizarRespuesta(i, opcion)
+                          }
                         />{' '}
                         {opcion}
                       </label>
@@ -485,24 +545,33 @@ export default function App() {
                   </div>
                 )}
 
+                {/* COMPLETAR */}
+
                 {actividadActual.tipo === 'completar' && (
                   <input
-                    style={estilos.campo}
+                    className="campo"
                     placeholder="Escribe tu respuesta..."
                     value={respuestas[i] || ''}
                     disabled={!!resultado || intentosUsados >= 3}
-                    onChange={e => actualizarRespuesta(i, e.target.value)}
+                    onChange={e =>
+                      actualizarRespuesta(i, e.target.value)
+                    }
                   />
                 )}
 
+                {/* RELACIONAR */}
+
                 {actividadActual.tipo === 'relacionar' && (
                   <select
-                    style={estilos.campo}
+                    className="campo"
                     value={respuestas[i] || ''}
                     disabled={!!resultado || intentosUsados >= 3}
-                    onChange={e => actualizarRespuesta(i, e.target.value)}
+                    onChange={e =>
+                      actualizarRespuesta(i, e.target.value)
+                    }
                   >
                     <option value="">Selecciona la relación</option>
+
                     {obtenerEjercicios(actividadActual).map((par, j) => (
                       <option key={j} value={par.respuesta}>
                         {par.respuesta}
@@ -511,26 +580,39 @@ export default function App() {
                   </select>
                 )}
 
+                {/* ORDENAR */}
+
                 {actividadActual.tipo === 'ordenar' && (
                   <div>
-                    <p>Selecciona los pasos en el orden correcto:</p>
+                    <p>
+                      Selecciona los pasos en el orden correcto:
+                    </p>
+
                     {(ejercicio.pasos || []).map((paso, j) => (
                       <label
                         key={j}
-                        style={{ display: 'block', margin: '8px 0' }}
+                        style={{
+                          display: 'block',
+                          margin: '12px 0'
+                        }}
                       >
                         Posición {j + 1}
+
                         <select
-                          style={estilos.campo}
+                          className="campo"
                           value={(respuestas[i] || [])[j] || ''}
                           disabled={!!resultado || intentosUsados >= 3}
                           onChange={e => {
-                            const actual = [...(respuestas[i] || [])]
+                            const actual = [
+                              ...(respuestas[i] || [])
+                            ]
+
                             actual[j] = e.target.value
                             actualizarRespuesta(i, actual)
                           }}
                         >
                           <option value="">Selecciona un paso</option>
+
                           {(ejercicio.pasos || []).map((opcion, k) => (
                             <option key={k} value={opcion}>
                               {opcion}
@@ -542,21 +624,26 @@ export default function App() {
                   </div>
                 )}
 
+                {/* CASOS PRÁCTICOS */}
+
                 {actividadActual.tipo === 'casos' && (
                   <div>
                     <textarea
-                      style={estilos.campo}
+                      className="campo"
                       rows="4"
                       placeholder="Escribe tu análisis y solución..."
                       disabled={!!resultado || intentosUsados >= 3}
                       value={respuestas[`texto-${i}`] || ''}
                       onChange={e =>
-                        actualizarRespuesta(`texto-${i}`, e.target.value)
+                        actualizarRespuesta(
+                          `texto-${i}`,
+                          e.target.value
+                        )
                       }
                     />
 
                     {!resultado && (
-                      <label style={estilos.opcion}>
+                      <label className="opcion">
                         <input
                           type="checkbox"
                           checked={respuestas[i] === true}
@@ -565,8 +652,8 @@ export default function App() {
                             actualizarRespuesta(i, e.target.checked)
                           }
                         />{' '}
-                        Considero que mi respuesta incluye las
-                        ideas principales de la solución.
+                        Considero que mi respuesta incluye
+                        las ideas principales de la solución.
                       </label>
                     )}
                   </div>
@@ -576,17 +663,25 @@ export default function App() {
               </section>
             ))}
 
+            {/* RESULTADO */}
+
             {resultado && (
-              <section style={estilos.panel}>
-                <h3>Resultado de tu actividad</h3>
+              <section className="panel">
+                <h3>🏆 Resultado de tu actividad</h3>
+
                 <p>
                   Respuestas correctas: {resultado.correctas} de{' '}
                   {resultado.total}
                 </p>
-                <p>Calificación: {resultado.nota} / 10</p>
+
+                <p>
+                  Calificación: {resultado.nota} / 10
+                </p>
+
                 <p>
                   Oportunidad utilizada: {resultado.intento} de 3
                 </p>
+
                 {actividadActual.tipo === 'casos' && (
                   <p>
                     Los casos prácticos utilizan autoevaluación.
@@ -624,6 +719,11 @@ export default function App() {
           </>
         )}
       </main>
+
+      <footer>
+        <p>Campus ABC · Tu aprendizaje, nuestra misión</p>
+        <p>Aprende, descubre y transforma tu futuro.</p>
+      </footer>
     </div>
   )
 }
