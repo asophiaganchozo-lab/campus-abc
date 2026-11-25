@@ -101,6 +101,8 @@ button {
   position: relative;
   color: #f5ead2;
   font-size: clamp(15px, 2vw, 19px);
+  max-width: 850px;
+  margin: 0 auto;
 }
 
 /* CONTENIDO PRINCIPAL */
@@ -134,7 +136,7 @@ button {
   background: var(--dorado);
 }
 
-/* CUADRÍCULA DE MATERIAS */
+/* TARJETAS */
 
 .especialidades {
   display: grid;
@@ -142,8 +144,6 @@ button {
   gap: 24px;
   margin: 35px 0 45px;
 }
-
-/* TARJETAS */
 
 .tarjeta {
   position: relative;
@@ -195,7 +195,7 @@ button {
   font-weight: 800;
 }
 
-/* SELECTORES */
+/* CAMPOS DE FORMULARIO */
 
 select,
 input,
@@ -215,6 +215,11 @@ input:focus,
 textarea:focus {
   border-color: var(--dorado);
   box-shadow: 0 0 0 3px rgba(214,179,90,.16);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
 }
 
 /* BOTONES */
@@ -254,7 +259,7 @@ button {
   transform: translateY(-2px);
 }
 
-/* PANELES Y CONTENIDO */
+/* PANELES Y LECCIONES */
 
 .panel,
 .contenido,
@@ -284,8 +289,6 @@ button {
   margin-bottom: 10px;
 }
 
-/* CONCEPTOS Y EXPLICACIONES */
-
 .concepto {
   padding: 20px;
   margin: 16px 0;
@@ -302,8 +305,6 @@ button {
 .concepto p {
   color: var(--texto-suave);
 }
-
-/* EJEMPLOS */
 
 .ejemplo {
   padding: 23px;
@@ -327,27 +328,104 @@ button {
   color: var(--morado);
 }
 
-/* OPCIONES Y RESPUESTAS */
+/* =========================================
+   ACTIVIDADES - OPCIONES MEJORADAS
+========================================= */
 
-.opcion,
-.respuesta,
-.campo {
-  padding: 13px 15px;
-  margin: 10px 0;
+.opcion {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 16px 18px;
+  margin: 13px 0;
+  text-align: left;
+  color: var(--texto);
   background: #faf7f0;
   border: 1px solid var(--borde);
-  border-radius: 10px;
+  border-radius: 13px;
+  cursor: pointer;
+  line-height: 1.5;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
 }
 
 .opcion:hover {
+  background: #f5efdf;
   border-color: var(--dorado);
+  transform: translateY(-2px);
 }
 
-.opcion label {
+/* CÍRCULOS DE SELECCIÓN */
+
+.opcion input[type="radio"] {
+  appearance: auto;
+  -webkit-appearance: radio;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--morado);
   cursor: pointer;
+  box-shadow: none;
 }
 
-/* ENLACES */
+/* CASILLAS DE VERIFICACIÓN */
+
+.opcion input[type="checkbox"] {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--morado);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+/* OPCIÓN SELECCIONADA */
+
+.opcion:has(input:checked) {
+  background: #f2edf8;
+  border: 2px solid var(--dorado);
+  box-shadow: 0 4px 12px rgba(36,20,61,.07);
+}
+
+/* CAMPOS DE RESPUESTA */
+
+.campo {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  margin: 13px 0;
+  color: var(--texto);
+  background: #fffdf9;
+  border: 1px solid var(--borde);
+  border-radius: 11px;
+}
+
+.campo:focus {
+  border-color: var(--dorado);
+  box-shadow: 0 0 0 3px rgba(214,179,90,.16);
+}
+
+/* RESPUESTAS Y RESULTADOS */
+
+.respuesta {
+  padding: 16px;
+  margin: 12px 0;
+  background: #faf7f0;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.panel strong {
+  color: var(--morado);
+}
 
 a {
   color: #7252a0;
@@ -383,7 +461,7 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
-/* RESPONSIVE */
+/* DISEÑO PARA CELULARES */
 
 @media (max-width: 700px) {
   .header {
@@ -410,7 +488,14 @@ input:focus-visible {
   .ejercicio {
     padding: 20px;
   }
+
+  .opcion {
+    padding: 15px;
+    gap: 11px;
+  }
 }
+
+/* REDUCIR MOVIMIENTOS */
 
 @media (prefers-reduced-motion: reduce) {
   *,
